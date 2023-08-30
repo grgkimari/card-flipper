@@ -10,7 +10,7 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         HStack{
-            CardView()
+            CardView(isFaceUp: true)
             CardView()
             CardView()
             CardView()
@@ -26,18 +26,20 @@ struct ContentView_Previews: PreviewProvider {
 }
 
 struct CardView : View{
-    var isFaceUp : Bool = false
+    @State var isFaceUp = false
+    var base = Circle()
     var body: some View {
         ZStack{
             if isFaceUp {
-                Circle().strokeBorder(lineWidth: 2)
-                Circle().foregroundColor(.white)
+                base.strokeBorder(lineWidth : 2)
                 Text("✈️").font(.largeTitle)
             }
             else{
-                Circle()
+                base
             }
             
+        }.onTapGesture {
+            isFaceUp = !isFaceUp
         }
     }
 }
