@@ -18,30 +18,42 @@ struct ContentView: View {
     }
     
     //COMPONENTS
+    func incrementCardCount (){
+        cardCount += 1
+    }
+    
+    func decrementCardCount (){
+        cardCount -= 1
+    }
     
     func cardControl(action : String) -> some View {
-        if action == "REMOVE"{
-            return Button(action: {
-                    if cardCount > 2{
-                        cardCount -= 1}
-                }
-            , label:  {
-                Image(systemName: "minus.circle").imageScale(.large).font(.largeTitle)
-            })
-            
+        var iconName  = ""
+        if action == "ADD" {
+            iconName = "plus.circle"
         }
-        else {
-            return Button(action: {
-                
-                    if cardCount < emojis.count{
-                        cardCount += 1
-                        
-                    }
-                
-            }, label:  {
-                Image(systemName: "plus.circle").imageScale(.large).font(.largeTitle)
-            })
+        else{
+            iconName = "minus.circle"
         }
+        return Button(action: {
+            if action == "ADD"{
+                incrementCardCount()
+            }
+            else{
+                decrementCardCount()
+            }
+        }, label: {
+            Image(systemName: iconName).imageScale(.large).font(.largeTitle)
+        }).disabled({
+            if action == "ADD" && cardCount == emojis.count{
+                return true
+            }
+            else if(action == "REMOVE" && cardCount == 2){
+                return true
+            }
+            else{
+                return false
+            }
+        }())
     }
     
     var cards : some View {
