@@ -13,8 +13,12 @@ struct ContentView: View {
     
     var body: some View {
         VStack{
-            cards
-            cardControls        }
+            ScrollView{
+                cards
+            }
+            cardControls
+            
+        }
     }
     
     //COMPONENTS
@@ -47,7 +51,7 @@ struct ContentView: View {
             if action == "ADD" && cardCount == emojis.count{
                 return true
             }
-            else if(action == "REMOVE" && cardCount == 2){
+            else if(action == "REMOVE" && cardCount == 3){
                 return true
             }
             else{
@@ -57,9 +61,9 @@ struct ContentView: View {
     }
     
     var cards : some View {
-        HStack{
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 75))]){
             ForEach(0..<cardCount, id: \.self){ index in
-                CardView(content : emojis[index])
+                CardView(content : emojis[index]).aspectRatio(2/3, contentMode: .fit)
                 
             }
             
@@ -97,13 +101,13 @@ struct CardView : View{
     var content : String
     var body: some View {
         ZStack{
-            if isFaceUp {
+            Group{
                 base.strokeBorder(lineWidth : 2)
-                Text(content).font(.largeTitle)
-            }
-            else{
-                base
-            }
+                Text(content).font(.system(size : 44))
+            }.opacity(isFaceUp ? 1 : 0)
+            base.opacity(isFaceUp ? 0 : 1)
+            
+            
             
         }.onTapGesture {
             isFaceUp = !isFaceUp
