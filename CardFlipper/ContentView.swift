@@ -8,83 +8,88 @@
 import SwiftUI
 
 struct ContentView: View {
-    let emojis = ["🚗","🚚","🚜","🚛","🚔", "✈️", "🚀", "🚁", "🚤"]
-    @State var cardCount = 4
+    @Environment(\.verticalSizeClass) var verticalSizeClass
+    @Environment(\.horizontalSizeClass) var horizontalSizeClass
+    
+    let themes : [String : [String]] = [
+        "vehicles" : ["🚗","🚚","🚜","🚛","🚔", "✈️", "🚀", "🚁", "🚤", "⛴️", "🛩️", "🛺", "🏎️", "🚙","🚓","🚌"],
+        "animals" : ["🐶","🐷","🐸","🐒","🐔","🐣","🦆","🦅","🦉","🐝","🪱","🐛","🦋","🐌","🦁","🦀"],
+        "sports" : ["⚽️","🏀","🏈","⚾️","🥎","🏐","🎱","🏓","🏑","🥊","🎽","🪃","🛼","⛸️","🤿","⛳️"]
+    ]
+    @State var cardCount = 16
+    @State var currentTheme = "vehicles"
     
     var body: some View {
         VStack{
-            ScrollView{
-                cards
+            if verticalSizeClass == .compact{
+                Text("Memorize!").font(.system(size : 26))
+                ScrollView{
+                    cards.padding()
+                }
+                
             }
-            cardControls
+            else{
+                Text("Memorize!").font(.largeTitle)
+                ScrollView{
+                    cards
+                }
+
+
+            }
+            
+                        themeControls.padding()
             
         }
     }
     
     //COMPONENTS
-    func incrementCardCount (){
-        cardCount += 1
-    }
-    
-    func decrementCardCount (){
-        cardCount -= 1
-    }
-    
-    func cardControl(action : String) -> some View {
-        var iconName  = ""
-        if action == "ADD" {
-            iconName = "plus.circle"
-        }
-        else{
-            iconName = "minus.circle"
-        }
-        return Button(action: {
-            if action == "ADD"{
-                incrementCardCount()
-            }
-            else{
-                decrementCardCount()
-            }
-        }, label: {
-            Image(systemName: iconName).imageScale(.large).font(.largeTitle)
-        }).disabled({
-            if action == "ADD" && cardCount == emojis.count{
-                return true
-            }
-            else if(action == "REMOVE" && cardCount == 3){
-                return true
-            }
-            else{
-                return false
-            }
-        }())
-    }
+
+
     
     var cards : some View {
         LazyVGrid(columns: [GridItem(.adaptive(minimum: 75))]){
             ForEach(0..<cardCount, id: \.self){ index in
-                CardView(content : emojis[index]).aspectRatio(2/3, contentMode: .fit)
-                
+                CardView(content : themes[currentTheme]![index])
             }
             
         }
     }
-    var cardRemover : some View {
-        cardControl(action: "REMOVE")
-            }
+
     
-    var cardAdder : some View {
-        cardControl(action: "ADD")
+    var themeControls : some View {
+        VStack{
+            Text("Theme").font(.body)
+            HStack{
+                Button(action: {
+                    currentTheme = "vehicles"
+                }, label: {
+                    VStack{
+                        Image(systemName: "car.fill").imageScale(.large)
+                        Text("Vehicles").font(Font.body)
+                    }
+                })
+                Spacer()
+                Button(action: {
+                    currentTheme = "animals"
+                }, label: {
+                    VStack{
+                        Image(systemName: "pawprint.fill").imageScale(.large)
+                        Text("Animals").font(Font.body)
+                    }                })
+                Spacer()
+                Button(action: {
+                    currentTheme = "sports"
+                }, label: {
+                    VStack{
+                        Image(systemName: "soccerball").imageScale(.large)
+                        Text("Sports").font(Font.body)
+                    }
+                })
+            }
+        }
     }
-    var cardControls : some View {
-        HStack{
-            cardRemover
-            Spacer()
-            cardAdder
-            
-        }.padding()
     }
-    }
+                   
 
 
 
